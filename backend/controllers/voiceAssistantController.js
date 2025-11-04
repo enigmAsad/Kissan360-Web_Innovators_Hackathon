@@ -52,6 +52,9 @@ export const proxyVoiceInteraction = async (req, res) => {
                 ...formData.getHeaders(),
             },
             timeout: VOICE_SERVICE_TIMEOUT_MS,
+            maxBodyLength: Infinity,
+            maxContentLength: Infinity,
+            responseType: 'json',
         });
 
         return res.status(response.status || 200).json(response.data);
@@ -59,10 +62,15 @@ export const proxyVoiceInteraction = async (req, res) => {
         const status = error.response?.status || 502;
         const payload = error.response?.data || { error: 'Voice assistant unavailable' };
 
-        console.error('Voice assistant proxy failed:', error.message || error);
+        const timeout = error.code === 'ECONNABORTED';
+        const detailMessage = timeout
+            ? `Voice service timed out after ${VOICE_SERVICE_TIMEOUT_MS}ms`
+            : error.message || error;
+
+        console.error('Voice assistant proxy failed:', detailMessage);
 
         return res.status(status).json({
-            error: payload.error || 'Voice assistant error',
+            error: timeout ? 'Voice assistant timed out' : payload.error || 'Voice assistant error',
             details: payload,
         });
     }
