@@ -20,6 +20,7 @@ class VoiceInteractionMetadata(BaseModel):
     stt_model: str = Field(..., description="Model used for transcription.")
     tts_model: str = Field(..., description="Model used for speech synthesis.")
     tts_voice: str = Field(..., description="Voice preset used for speech synthesis.")
+    tts_format: str = Field(..., description="Audio container/codec returned for speech synthesis.")
     confidence: Optional[float] = Field(
         None,
         ge=0,

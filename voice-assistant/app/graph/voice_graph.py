@@ -35,6 +35,7 @@ class VoiceGraphState(TypedDict, total=False):
     llm_model: str
     tts_model: str
     tts_voice: str
+    tts_format: str
 
 
 def _transcribe(state: VoiceGraphState) -> VoiceGraphState:
@@ -120,6 +121,7 @@ def _synthesize(state: VoiceGraphState) -> VoiceGraphState:
         "tts_audio": speech.audio_bytes,
         "tts_model": speech.model,
         "tts_voice": speech.voice,
+        "tts_format": speech.format,
         "language": language,
     }
 

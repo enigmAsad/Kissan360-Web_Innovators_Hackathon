@@ -56,4 +56,5 @@ async def test_invoke_voice_graph(monkeypatch: pytest.MonkeyPatch) -> None:
     assert result["tts_audio"] == b"fake-binary"
     assert result["tts_model"] == "gpt-4o-mini-tts"
     assert result["llm_model"] == "gpt-5-mini"
+    assert result["tts_format"] == "mp3"
 

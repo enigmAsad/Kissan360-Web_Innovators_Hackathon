@@ -94,6 +94,7 @@ async def voice_interact(
         stt_model=graph_result.get("stt_model", settings.stt_model),
         tts_model=graph_result.get("tts_model", settings.tts_model),
         tts_voice=graph_result.get("tts_voice", settings.tts_voice),
+        tts_format=graph_result.get("tts_format", settings.tts_format),
         processing_ms=processing_ms,
     )
 

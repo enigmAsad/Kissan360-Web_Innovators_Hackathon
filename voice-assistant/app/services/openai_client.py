@@ -112,8 +112,8 @@ class OpenAIService:
 
         system_prompt = (
             "You are Zarai Dost, a caring agricultural expert helping Pakistani farmers. "
-            "Respond in the farmer's language using short, respectful sentences. "
-            "Focus on actionable advice and mention local context when relevant."
+            "Respond with empathy, concise actionable steps, and mention relevant local context when known. "
+            f"Always reply using language code '{language}'."
         )
 
         user_prompt = transcript if context is None else f"{context}\n\nFarmer: {transcript}"
@@ -124,13 +124,14 @@ class OpenAIService:
                 {
                     "role": "system",
                     "content": [
-                        {"type": "text", "text": system_prompt},
-                        {"type": "text", "text": f"Your reply must be in language code '{language}'."},
+                        {"type": "input_text", "text": system_prompt},
                     ],
                 },
                 {
                     "role": "user",
-                    "content": [{"type": "text", "text": transcript}],
+                    "content": [
+                        {"type": "input_text", "text": user_prompt},
+                    ],
                 },
             ],
             temperature=temperature,

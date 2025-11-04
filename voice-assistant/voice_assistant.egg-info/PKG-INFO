@@ -13,6 +13,11 @@ Requires-Dist: pydantic<3.0.0,>=2.7.0
 Requires-Dist: pydantic-settings<3.0.0,>=2.2.0
 Requires-Dist: python-multipart<0.1.0,>=0.0.9
 Requires-Dist: aiofiles<24.0.0,>=23.2.1
+Requires-Dist: sounddevice<0.5.0,>=0.4.6
+Requires-Dist: numpy<3.0.0,>=1.26.0
+Requires-Dist: scipy<2.0.0,>=1.11.0
+Requires-Dist: simpleaudio<2.0.0,>=1.0.4
+Requires-Dist: requests<3.0.0,>=2.32.0
 Provides-Extra: dev
 Requires-Dist: pytest<9.0.0,>=8.2.0; extra == "dev"
 Requires-Dist: pytest-asyncio<0.24.0,>=0.23.0; extra == "dev"
@@ -31,10 +36,10 @@ Language-first assistant for Pakistani farmers that accepts spoken questions, re
 ## Quickstart
 ```bash
 cd @voice-assistant
-.\.venv\Scripts\activate   # Windows PowerShell
-uv sync      
+\.venv\Scripts\activate   # Windows PowerShell
+uv sync  # or: pip install -e .[dev]
 
-uvicorn app.main:app --reload
+uvicorn app.main:app --reload --port 8001
 ```
 
 ### Environment variables
@@ -47,6 +52,9 @@ LLM_MODEL=gpt-5-mini
 STT_MODEL=whisper-1
 TTS_MODEL=gpt-4o-mini-tts
 TTS_VOICE=alloy
+TTS_FORMAT=wav
+MAX_AUDIO_SECONDS=90
+ALLOWED_AUDIO_MIME_TYPES=["audio/wav","audio/webm","audio/mpeg","audio/mp3","audio/ogg","audio/flac"]
 ```
 
 ## Example Request
@@ -67,6 +75,8 @@ Response:
   "metadata": {
     "stt_model": "whisper-1",
     "tts_model": "gpt-4o-mini-tts",
+    "tts_voice": "alloy",
+    "tts_format": "wav",
     "confidence": 0.89
   }
 }
@@ -83,9 +93,23 @@ app/
     openai_client.py   # Thin OpenAI client wrapper
   graph/
     voice_graph.py     # LangGraph workflow definition
+scripts/
+  live_client.py      # Mic-to-assistant CLI helper
 tests/
   test_graph.py        # Mocked pipeline sanity checks
 ```
+
+## Real-time Testing
+
+1. Install the extra audio/testing deps inside your venv:
+   ```bash
+   pip install .[client]
+   ```
+2. Ensure `TTS_FORMAT=wav` in `.env` for easiest playback.
+3. Start the service: `uvicorn app.main:app --reload --port 8001`.
+4. Run the helper: `python scripts/live_client.py --language ur`.
+   - Press Enter, speak your question, wait for the assistant reply.
+   - The script prints the transcript/text response and plays the synthesized audio. If a non-wav format is returned, it saves the file in `assistant_replies/`.
 
 ## Next Steps
 - Integrate with core backend via internal HTTP call.
