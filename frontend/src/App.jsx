@@ -65,7 +65,8 @@ const LandingRoute = ({ children }) => {
   const { user } = useAuth();
 
   if (user) {
-    return <Navigate to={`/${user.role}/dashboard`} replace />;
+    const dashboardPath = user.role === 'admin' ? '/admin-dashboard' : '/farmer-dashboard';
+    return <Navigate to={dashboardPath} replace />;
   }
 
   return children;
