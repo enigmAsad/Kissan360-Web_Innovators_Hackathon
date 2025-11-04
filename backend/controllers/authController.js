@@ -1,25 +1,13 @@
-import '../config/env.js';
 import User from '../models/auth.model.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
 
-// Load environment variables
-dotenv.config();
-
-
-const JWT_SECRET = process.env.JWT_KEY || process.env.JWT_SECRET;
-
-const ALLOWED_ROLES = ['admin', 'farmer', 'expert'];
+const ALLOWED_ROLES = ['admin', 'farmer'];
 
 export const signup = async (req, res) => {
 console.log(req.body);
 const { name, email, password, role } = req.body;
 try {
-    if (!JWT_SECRET) {
-        console.error('JWT secret is not configured');
-        return res.status(500).json({ message: "Authentication service misconfigured" });
-    }
     // Ensure all fields are provided
     if (!name || !email || !password || !role) {
         return res.status(400).json({ message: "All fields are required" });
@@ -42,7 +30,7 @@ try {
     // Generate JWT token
     const token = jwt.sign(
         { id: newUser._id, role: newUser.role },
-        JWT_SECRET,
+        process.env.JWT_SECRET,
         { expiresIn: "10h" }
     );
 
@@ -63,10 +51,6 @@ export const signin = async (req, res) => {
 console.log(req.body);
 const { email, password, role } = req.body;
 try {
-    if (!JWT_SECRET) {
-        console.error('JWT secret is not configured');
-        return res.status(500).json({ message: "Authentication service misconfigured" });
-    }
     console.log(role);
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found" });
@@ -79,7 +63,7 @@ try {
     // Generate JWT token
     const token = jwt.sign(
         { id: user._id, role: user.role },
-        JWT_SECRET,
+        process.env.JWT_SECRET,
         { expiresIn: "10h" }
     );
 
