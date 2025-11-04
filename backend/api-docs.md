@@ -7,7 +7,7 @@ Auth uses an HTTP-only cookie `token` (JWT). For protected endpoints, include th
 ## Authentication
 
 ### POST /api/auth/signup
-Create a user (admin or farmer).
+Create a user (`farmer` or `admin`). The value `expert` is accepted as an alias for `admin` to support legacy data, but new admin users should continue to be stored as `admin`.
 - Body (JSON):
 ```
 { "name": "Alice", "email": "alice@example.com", "password": "secret123", "role": "admin" }
@@ -18,7 +18,7 @@ Create a user (admin or farmer).
 ```
 
 ### POST /api/auth/signin
-Login with credentials and role.
+Login with credentials and role (`farmer`, `admin`, or the legacy `expert`).
 - Body (JSON):
 ```
 { "email": "alice@example.com", "password": "secret123", "role": "admin" }
@@ -36,7 +36,7 @@ Clears the session cookie.
 ```
 
 ### GET /api/auth/validate-token
-Validates JWT cookie.
+Validates the current session token. The middleware first looks for the HTTP-only cookie `token`, and falls back to an `Authorization: Bearer <token>` header if present.
 - Success (200):
 ```
 { "userId": "<mongoId>", "role": "admin" }
@@ -46,6 +46,10 @@ Validates JWT cookie.
 Cookie flags:
 - Dev: `secure=false`, `sameSite='Lax'`
 - Prod (HTTPS): `secure=true`, `sameSite='None'`
+
+Notes:
+- JWTs are signed with `process.env.JWT_SECRET` when present, and fall back to `process.env.JWT_KEY` for backward compatibility.
+- If neither secret is configured, auth endpoints respond with `500 Authentication service misconfigured`.
 
 ## Forum (Posts) [protected]
 All endpoints require auth cookie.
@@ -133,16 +137,37 @@ Returns farming-related news articles from NewsAPI.
 - Success (200): `Article[]` (fields from NewsAPI)
 - Error (500): `{ message: "Error fetching news" }`
 
+## Notifications
+
+### GET /api/notifications/farming-notifications
+Generate short farming alerts for the requested region.
+- Query: `region=Lahore`
+- Success (200): `{ alerts: "Alert one\nAlert two", warning?: string }`
+- Behavior: If the OpenAI integration fails or no API key is configured, the endpoint still replies with HTTP 200 and a fallback message (`"Update not available\nCheck local advisories"`) alongside an optional `warning` string for observability.
+
 ## Weather
 
-### GET /api/weather/current
-- Query: `city=Lahore`
+### GET /api/weather/
 - Success (200):
 ```
-{ "city": "Lahore", "country": "PK", "temperatureC": 30.5, "humidity": 48, "condition": "clear sky", "icon": "01d", "windSpeed": 3.6, "dt": 1730716800 }
+{
+    "generatedAt": "2025-11-04T12:00:00.000Z",
+    "mapboxToken": "<mapbox-token-if-provided>",
+    "cities": [
+        {
+            "city": "Karachi",
+            "condition": "Humid heatwave",
+            "temperature": 34,
+            "humidity": 68,
+            "precipitationChance": 12,
+            "category": "heat",
+            "coordinates": { "latitude": 24.8607, "longitude": 67.0011 }
+        }
+    ]
+}
 ```
-- Env required: `OPENWEATHER_API_KEY` (or `WEATHER_API_KEY`)
-- Error (500): `{ message: "Failed to fetch weather" }`
+- Env required: `MAPBOX_TOKEN` (optional; coordinates will fall back to defaults if not provided)
+- Error (500): `{ "error": "Failed to load weather data" }`
 
 ## Short Advice
 
@@ -199,9 +224,10 @@ Generate short advice using recent price trend; optionally include rain signal f
 
 ## Environment variables
 - `MONGO_URL` (required)
-- `JWT_KEY` (required)
+- `JWT_SECRET` (preferred) **or** `JWT_KEY` (legacy) — one of these must be present
 - `CORS_ORIGIN` (default `http://localhost:5173`)
 - `NODE_ENV` (affects cookie flags)
 - `NEWS_API_KEY` (for `/api/news/farming_news`)
-- `OPENWEATHER_API_KEY` or `WEATHER_API_KEY` (for `/api/weather/current`)
+- `OPENAI_API_KEY` (optional; enables rich alerts for `/api/notifications/farming-notifications`)
+- `MAPBOX_TOKEN` (optional; for `/api/weather`)
 
