@@ -1,12 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import '../FarmerDashboard/FarmerDashboard.scss';
+import './AdminDashboard.scss';
 import { toast } from 'react-toastify';
+import DashboardTab from '../../components/admin/tabs/DashboardTab';
+import AddTab from '../../components/admin/tabs/AddTab';
+import UpdateTab from '../../components/admin/tabs/UpdateTab';
+import DeleteTab from '../../components/admin/tabs/DeleteTab';
+import ManagePricesTab from '../../components/admin/tabs/ManagePricesTab';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const [activeTab, setActiveTab] = useState('dashboard');
 
   const handleLogout = async () => {
     try {
@@ -19,7 +25,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="farmer-dashboard">
+    <div className="admin-dashboard">
       <header className="dashboard-header">
         <div className="header-content">
           <div className="logo">
@@ -32,34 +38,53 @@ const AdminDashboard = () => {
         </div>
       </header>
 
-      <main className="dashboard-main">
-        <div className="welcome-card">
-          <h2>Admin Dashboard 🎛️</h2>
-          <p>Manage market data and system settings</p>
-          <div className="features-grid">
-            <div className="feature-card">
-              <span className="feature-icon">📊</span>
-              <h3>Market Data</h3>
-              <p>Add/update prices</p>
-            </div>
-            <div className="feature-card">
-              <span className="feature-icon">🥬</span>
-              <h3>Items</h3>
-              <p>Manage market items</p>
-            </div>
-            <div className="feature-card">
-              <span className="feature-icon">👥</span>
-              <h3>Users</h3>
-              <p>View farmer accounts</p>
-            </div>
-            <div className="feature-card">
-              <span className="feature-icon">📈</span>
-              <h3>Analytics</h3>
-              <p>System insights</p>
-            </div>
-          </div>
-        </div>
-      </main>
+      <div className="dashboard-body">
+        <aside className="admin-sidebar">
+          <button
+            className={`sidebar-link ${activeTab === 'dashboard' ? 'active' : ''}`}
+            onClick={() => setActiveTab('dashboard')}
+          >
+            <span className="icon">🏠</span>
+            <span>Dashboard</span>
+          </button>
+          <button
+            className={`sidebar-link ${activeTab === 'add' ? 'active' : ''}`}
+            onClick={() => setActiveTab('add')}
+          >
+            <span className="icon">➕</span>
+            <span>Add</span>
+          </button>
+          <button
+            className={`sidebar-link ${activeTab === 'update' ? 'active' : ''}`}
+            onClick={() => setActiveTab('update')}
+          >
+            <span className="icon">✏️</span>
+            <span>Update</span>
+          </button>
+          <button
+            className={`sidebar-link ${activeTab === 'prices' ? 'active' : ''}`}
+            onClick={() => setActiveTab('prices')}
+          >
+            <span className="icon">💰</span>
+            <span>Price Entry</span>
+          </button>
+          <button
+            className={`sidebar-link ${activeTab === 'delete' ? 'active' : ''}`}
+            onClick={() => setActiveTab('delete')}
+          >
+            <span className="icon">🗑️</span>
+            <span>Delete</span>
+          </button>
+        </aside>
+
+        <main className="admin-content">
+          {activeTab === 'dashboard' && <DashboardTab />}
+          {activeTab === 'add' && <AddTab />}
+          {activeTab === 'update' && <UpdateTab />}
+          {activeTab === 'prices' && <ManagePricesTab />}
+          {activeTab === 'delete' && <DeleteTab />}
+        </main>
+      </div>
     </div>
   );
 };

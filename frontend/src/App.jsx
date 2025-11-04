@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import LandingPage from './pages/LandingPage/LandingPage';
 import Login from './pages/Login/Login';
 import Signup from './pages/Signup/Signup';
 import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
@@ -60,6 +61,16 @@ const PublicRoute = ({ children }) => {
   return children;
 };
 
+const LandingRoute = ({ children }) => {
+  const { user } = useAuth();
+
+  if (user) {
+    return <Navigate to={`/${user.role}/dashboard`} replace />;
+  }
+
+  return children;
+};
+
 function AppRoutes() {
   return (
     <>
@@ -68,9 +79,9 @@ function AppRoutes() {
         <Route
           path="/"
           element={
-            <PublicRoute>
-              <Login />
-            </PublicRoute>
+            <LandingRoute>
+              <LandingPage />
+            </LandingRoute>
           }
         />
         <Route
@@ -115,7 +126,7 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>
   );

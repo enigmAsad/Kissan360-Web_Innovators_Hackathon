@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { Sprout } from 'lucide-react';
 import './Signup.scss';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -56,12 +57,26 @@ const Signup = () => {
 
   return (
     <div className="signup-page">
+      {/* Navigation */}
+      <nav className="navbar">
+        <div className="nav-container">
+          <div className="logo" onClick={() => navigate('/')}>
+            <Sprout className="logo-icon" size={32} strokeWidth={2.5} />
+            <span className="logo-text">Kissan360</span>
+          </div>
+          <div className="nav-buttons">
+            <button className="btn-login" onClick={() => navigate('/login')}>Login</button>
+            <button className="btn-signup active" onClick={() => navigate('/signup')}>Sign Up</button>
+          </div>
+        </div>
+      </nav>
+
       <ToastContainer position="top-right" autoClose={3000} theme="dark" />
       <div className="signup-container">
         <div className="signup-header">
-          <div className="logo">
-            <span className="logo-icon">🌾</span>
-            <h1>Kissan360</h1>
+          <div className="form-logo">
+            <Sprout className="form-logo-icon" size={48} strokeWidth={2.5} />
+            <h1>Create Account</h1>
           </div>
           <p className="subtitle">Join the future of farming</p>
         </div>

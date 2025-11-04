@@ -56,8 +56,23 @@ export const createPrice = async (req, res) => {
 // GET /api/market/items - Get all items or items with latest prices for a city
 export const getItems = async (req, res) => {
     try {
-        const { city } = req.query;
+        const { city, withCities } = req.query;
         const items = await MarketItem.find({ enabled: true });
+        
+        // If withCities is requested, attach all cities that have prices for each item
+        if (withCities === 'true') {
+            const itemsWithCities = await Promise.all(
+                items.map(async (item) => {
+                    const prices = await MarketPrice.find({ item: item._id }).distinct('city');
+                    
+                    return {
+                        ...item.toObject(),
+                        cities: prices || [],
+                    };
+                })
+            );
+            return res.json(itemsWithCities);
+        }
         
         if (!city) {
             return res.json(items);
@@ -190,5 +205,43 @@ export const getPricesSummary = async (req, res) => {
         });
     } catch (err) {
         res.status(500).json({ message: 'Failed to fetch summary', error: err.message });
+    }
+};
+
+// GET /api/market/cities - Get unique cities from price data
+export const getCities = async (req, res) => {
+    try {
+        const cities = await MarketPrice.distinct('city');
+        res.json(cities.sort());
+    } catch (err) {
+        res.status(500).json({ message: 'Failed to fetch cities', error: err.message });
+    }
+};
+
+// GET /api/market/prices/item/:itemId - Get all prices for a specific item
+export const getItemPrices = async (req, res) => {
+    try {
+        const { itemId } = req.params;
+        const prices = await MarketPrice.find({ item: itemId }).sort({ city: 1, date: -1 });
+        res.json(prices);
+    } catch (err) {
+        res.status(500).json({ message: 'Failed to fetch item prices', error: err.message });
+    }
+};
+
+// DELETE /api/market/prices/item/:itemId/city/:city - Delete all prices for an item in a specific city (Admin only)
+export const deleteItemCityPrices = async (req, res) => {
+    try {
+        const { itemId, city } = req.params;
+        const result = await MarketPrice.deleteMany({ item: itemId, city: city });
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ message: 'No price data found for this item in this city' });
+        }
+        res.json({ 
+            message: 'Price data deleted successfully', 
+            deletedCount: result.deletedCount 
+        });
+    } catch (err) {
+        res.status(500).json({ message: 'Failed to delete price data', error: err.message });
     }
 };
