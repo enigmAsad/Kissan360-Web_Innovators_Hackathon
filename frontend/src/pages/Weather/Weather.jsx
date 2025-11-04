@@ -18,7 +18,7 @@ const Weather = () => {
   const fetchWeather = async () => {
     setLoading(true);
     try {
-      const res = await api.get('/weather/');
+      const res = await api.get('/api/weather/');
       setWeatherData(res.data);
     } catch (err) {
       console.error('Failed to fetch weather:', err);
