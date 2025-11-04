@@ -27,4 +27,33 @@ Notes:
 - Create/update payloads accept: `{ title, content }`.
 - The backend associates the `author` from the authenticated user (decoded from the JWT) and does not require it in the payload.
 - Authorization: only the post owner can update or delete their post.
+  
+## MarketItem (marketItem.model.js)
+- _id: string (Mongo ObjectId)
+- name: string (required, unique per category)
+- category: 'vegetable' | 'fruit' (required)
+- unit: string (default `kg`)
+- description: string (optional)
+- enabled: boolean (default `true`)
+- createdAt / updatedAt: ISO datetime
 
+Notes:
+- Admin dashboard will create/update/delete (or disable) these items.
+- Frontend can filter by `category` to separate vegetables vs fruits.
+- Use `enabled=false` to hide an item without losing historical price data.
+
+## MarketPrice (marketPrice.model.js)
+- _id: string (Mongo ObjectId)
+- item: string (MarketItem _id) or populated object
+- city: string (required)
+- date: ISO date (one entry per item+city+date)
+- price: number (required, >= 0)
+- currency: string (default `PKR`)
+- source: string (optional)
+- createdAt / updatedAt: ISO datetime
+
+Notes:
+- Admin add/update flow should send `{ item, city, date, price, currency? }`.
+- Unique index on `(item, city, date)` ensures only one record per day per city.
+- Trend endpoints will query the last 7 documents sorted by `date`.
+- If fewer than 7 entries exist, backend will simulate/interpolate once we implement the controller (see README plan).

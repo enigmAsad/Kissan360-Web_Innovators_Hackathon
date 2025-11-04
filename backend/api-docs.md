@@ -92,6 +92,46 @@ Returns farming-related news articles from NewsAPI.
 - Success (200): `Article[]` (fields from NewsAPI)
 - Error (500): `{ message: "Error fetching news" }`
 
+## Market Data
+
+### POST /api/market/items
+- Auth: Admin only
+- Body: `{ "name": "Tomato", "category": "vegetable", "unit": "kg", "description": "Fresh tomato" }`
+- Success (201): `{ message: "Item created", item }`
+
+### PATCH /api/market/items/:id
+- Auth: Admin only
+- Body: any of `{ name, category, unit, description, enabled }`
+- Success (200): `{ message: "Item updated", item }`
+- Not found (404): `{ message }`
+
+### DELETE /api/market/items/:id
+- Auth: Admin only
+- Behavior: soft-disable (`enabled=false`)
+- Success (200): `{ message: "Item disabled", item }`
+
+### POST /api/market/prices
+- Auth: Admin only
+- Body: `{ "item": "<itemId>", "city": "Lahore", "date": "2025-11-04", "price": 220, "currency": "PKR" }`
+- Success (200): `{ message: "Price saved", upserted: true|false }`
+
+### GET /api/market/items
+- Auth: Public
+- Query: `city=Lahore` (optional)
+- Success (200):
+  - Without city: `MarketItem[]`
+  - With city: array of items with `{ latestPrice, lastUpdated }`
+
+### GET /api/market/items/:id/trend
+- Auth: Public
+- Query: `city=Lahore` (required)
+- Success (200): `{ item, city, data: [{ date: "YYYY-MM-DD", price }] }` (7 days; missing values are carried forward)
+
+### GET /api/market/compare
+- Auth: Public
+- Query: `items=tomatoId,potatoId&city=Lahore`
+- Success (200): `{ city, series: [{ itemId, name, unit, data: [{ date, price }] }] }`
+
 ## Environment variables
 - `MONGO_URL` (required)
 - `JWT_KEY` (required)

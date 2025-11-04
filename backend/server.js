@@ -7,6 +7,7 @@ import authRoute from './routes/authRoute.js';
 import validateTokenRoutes from './routes/validateTokenRoutes.js';
 import postRoutes from './routes/postRoutes.js';
 import farmingNewsRoute from './routes/farmingNewsRoute.js';
+import marketRoutes from './routes/marketRoutes.js';
 
 dotenv.config();
 const app = express();
@@ -25,6 +26,7 @@ app.use('/api/auth', authRoute);
 app.use('/api/auth', validateTokenRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/news', farmingNewsRoute);
+app.use('/api/market', marketRoutes);
 
 // DB connect
 const connection = async () => {
