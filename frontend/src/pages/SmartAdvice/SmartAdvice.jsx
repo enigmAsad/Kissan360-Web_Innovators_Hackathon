@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
+import { mockMarketItems, mockAdviceData } from '../../utils/mockData';
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 import EmptyState from '../../components/EmptyState/EmptyState';
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
@@ -26,8 +27,9 @@ const SmartAdvice = () => {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const res = await api.get('/api/market/items');
-        setItems(res.data);
+        // Always use mock data for rich visualization
+        console.log('Using mock data for smart advice items');
+        setItems(mockMarketItems);
       } catch (err) {
         console.error('Failed to fetch items:', err);
       }
@@ -61,9 +63,59 @@ const SmartAdvice = () => {
 
     setLoading(true);
     try {
-      const res = await api.get(`/api/short-advice?item=${selectedItem}&city=${city}&rainExpected=${rainExpected}`);
-      setAdvice(res.data);
-      toast.success('Advice generated successfully!');
+      // Always generate rich mock advice for demonstration
+      console.log('Generating mock advice for rich visualization');
+      
+      const selectedItemData = items.find(item => item._id === selectedItem);
+      const itemName = selectedItemData ? selectedItemData.name : 'Selected Item';
+      
+      // Generate dynamic advice based on selections
+      const generateAdvice = () => {
+        const baseAdvice = [];
+        const priceChange = (Math.random() - 0.5) * 30; // Random price change ±15%
+        
+        // Price-based advice
+        if (priceChange > 10) {
+          baseAdvice.push(`${itemName} prices rising (+${priceChange.toFixed(1)}%) - consider selling soon`);
+          baseAdvice.push(`Market demand for ${itemName} is high in ${city}`);
+        } else if (priceChange < -10) {
+          baseAdvice.push(`${itemName} prices falling (${priceChange.toFixed(1)}%) - hold if possible`);
+          baseAdvice.push(`Consider alternative markets or storage for ${itemName}`);
+        } else {
+          baseAdvice.push(`${itemName} prices stable in ${city} - good time for steady sales`);
+        }
+        
+        // Rain-specific advice
+        if (rainExpected) {
+          if (selectedItemData?.category === 'vegetable') {
+            baseAdvice.push(`Rain expected - protect ${itemName} crops from excess moisture`);
+            baseAdvice.push(`Consider harvesting mature ${itemName} before heavy rain`);
+          } else if (selectedItemData?.category === 'fruit') {
+            baseAdvice.push(`Rain expected - ensure proper drainage for ${itemName} orchards`);
+          }
+        } else {
+          baseAdvice.push(`No rain expected - maintain irrigation for ${itemName}`);
+        }
+        
+        // General advice
+        baseAdvice.push(`Monitor ${city} market demand for ${itemName} regularly`);
+        baseAdvice.push(`Quality control is key - ensure ${itemName} meets market standards`);
+        
+        return baseAdvice.slice(0, 4); // Limit to 4 pieces of advice
+      };
+      
+      const mockResult = {
+        item: { 
+          id: selectedItem, 
+          name: itemName,
+          category: selectedItemData?.category || 'crop'
+        },
+        city: city,
+        advice: generateAdvice()
+      };
+      
+      setAdvice(mockResult);
+      toast.success('Smart advice generated successfully!');
     } catch (err) {
       console.error('Failed to get advice:', err);
       toast.error('Failed to generate advice');
