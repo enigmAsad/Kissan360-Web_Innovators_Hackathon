@@ -111,7 +111,6 @@ class OpenAIService:
         transcript: str,
         language: str,
         context: Optional[str] = None,
-        temperature: float = 0.6,
         model: Optional[str] = None,
     ) -> LLMResult:
         """Ask the GPT model to produce a concise, empathetic response."""
@@ -149,11 +148,36 @@ class OpenAIService:
                     ],
                 },
             ],
-            max_output_tokens=300,
         )
 
         text = _extract_text(response)
-        return LLMResult(text=text, model=target_model)
+        if text.strip():
+            return LLMResult(text=text, model=target_model)
+
+        logger.warning("Responses API returned empty text; falling back to chat.completions")
+
+        chat_response = self._client.chat.completions.create(
+            model=target_model,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+        )
+
+        fallback_text = ""
+        choices = getattr(chat_response, "choices", None)
+        if choices:
+            first_choice = choices[0]
+            message = getattr(first_choice, "message", None)
+            if message is None and hasattr(first_choice, "delta"):
+                message = getattr(first_choice, "delta")
+            if message is not None:
+                fallback_text = getattr(message, "content", "") or ""
+
+        if not fallback_text:
+            logger.warning("Chat completions fallback also returned no content")
+
+        return LLMResult(text=fallback_text.strip(), model=target_model)
 
     def synthesize_speech(
         self,
@@ -240,22 +264,82 @@ def _extract_text(response: Any) -> str:
     if isinstance(text, str) and text.strip():
         return text.strip()
 
-    # Fallback to inspect the output blocks.
+    # Fallback to inspect the output blocks or recursively walk the response.
+    chunks: list[str] = []
+
+    def _collect_text(value: object, *, _visited: set[int]) -> None:
+        if value is None:
+            return
+
+        value_id = id(value)
+        if value_id in _visited:
+            return
+        _visited.add(value_id)
+
+        if isinstance(value, str):
+            stripped = value.strip()
+            if stripped:
+                chunks.append(stripped)
+            return
+
+        if isinstance(value, dict):
+            for key, nested in value.items():
+                if key in {"text", "output_text", "value"}:
+                    _collect_text(nested, _visited=_visited)
+                else:
+                    _collect_text(nested, _visited=_visited)
+            return
+
+        if isinstance(value, (list, tuple, set)):
+            for item in value:
+                _collect_text(item, _visited=_visited)
+            return
+
+        # Handle SDK-specific objects where attributes expose nested content.
+        for attr in ("output", "content", "text", "output_text", "value", "data"):
+            if hasattr(value, attr):
+                try:
+                    nested_value = getattr(value, attr)
+                except Exception:  # pragma: no cover - defensive
+                    continue
+                _collect_text(nested_value, _visited=_visited)
+
+    # Prefer the direct output list if available.
     output = getattr(response, "output", None)
     if output:
-        chunks: list[str] = []
-        for item in output:
-            content = getattr(item, "content", None)
-            if not content:
-                continue
-            for block in content:
-                block_type = block.get("type") if isinstance(block, dict) else getattr(block, "type", None)
-                if block_type == "text":
-                    text_value = block.get("text") if isinstance(block, dict) else getattr(block, "text", None)
-                    if text_value:
-                        chunks.append(str(text_value))
-        if chunks:
-            return "\n".join(chunks).strip()
+        _collect_text(output, _visited=set())
+    else:
+        # Fall back to model_dump / dict serialisations.
+        serialisers = (
+            "model_dump",
+            "model_dump_json",
+            "dict",
+            "to_dict",
+            "model_dump_recursive",
+        )
+        for name in serialisers:
+            serializer = getattr(response, name, None)
+            if callable(serializer):
+                try:
+                    dumped = serializer()
+                    if isinstance(dumped, str):
+                        try:
+                            import json
+
+                            dumped = json.loads(dumped)
+                        except Exception:  # pragma: no cover - defensive
+                            chunks.append(dumped.strip())
+                            break
+                    _collect_text(dumped, _visited=set())
+                    break
+                except Exception:  # pragma: no cover - defensive
+                    continue
+
+        if not chunks:
+            _collect_text(response, _visited=set())
+
+    if chunks:
+        return "\n".join(chunk for chunk in chunks if chunk).strip()
 
     return ""
 
