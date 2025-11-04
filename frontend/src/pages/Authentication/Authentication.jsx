@@ -9,6 +9,9 @@ const Authentication = ({ setUserRole }) => {
   const containerRef = useRef(null);
   const navigate = useNavigate();
   
+  const toApiRole = (uiRole) => (uiRole === 'expert' ? 'admin' : uiRole);
+  const toUiRole = (apiRole) => (apiRole === 'admin' ? 'expert' : apiRole);
+
   // Signup state
   const [signupName, setSignupName] = useState('');
   const [signupEmail, setSignupEmail] = useState('');
@@ -35,8 +38,9 @@ const Authentication = ({ setUserRole }) => {
           if (response.data.message) {
             toast.success(response.data.message);
           }
-          setUserRole(response.data.role);
-          navigate(response.data.role === 'farmer' ? '/farmer_home' : '/expert_home');
+          const uiRole = toUiRole(response.data.role);
+          setUserRole(uiRole);
+          navigate(uiRole === 'farmer' ? '/farmer_home' : '/expert_home');
         }
       } catch (error) {
         if (storedToken) {
@@ -63,13 +67,13 @@ const Authentication = ({ setUserRole }) => {
         name: signupName,
         email: signupEmail,
         password: signupPassword,
-        role: signupRole,
+        role: toApiRole(signupRole),
       }, { withCredentials: true });
       toast.success(response.data.message);
       if (response.data?.token) {
         localStorage.setItem('token', response.data.token);
       }
-      const roleFromResponse = response.data?.role || signupRole;
+      const roleFromResponse = toUiRole(response.data?.role) || signupRole;
       setUserRole(roleFromResponse);
       navigate(roleFromResponse === 'farmer' ? '/farmer_home' : '/expert_home');
     } catch (error) {
@@ -83,13 +87,13 @@ const Authentication = ({ setUserRole }) => {
       const response = await newRequest.post('/api/auth/signin', {
         email: signinEmail,
         password: signinPassword,
-        role: signinRole,
+        role: toApiRole(signinRole),
       }, { withCredentials: true });
       toast.success(response.data.message);
       if (response.data?.token) {
         localStorage.setItem('token', response.data.token);
       }
-      const roleFromResponse = response.data?.role || signinRole;
+      const roleFromResponse = toUiRole(response.data?.role) || signinRole;
       setUserRole(roleFromResponse);
       navigate(roleFromResponse === 'farmer' ? '/farmer_home' : '/expert_home');
     } catch (error) {
