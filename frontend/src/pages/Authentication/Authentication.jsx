@@ -24,8 +24,7 @@ const Authentication = ({ setUserRole }) => {
     const checkToken = async () => {
       const storedToken = localStorage.getItem('token');
       if (!storedToken) {
-        console.log("No stored token found, proceed to login/signup");
-        return;
+        console.log("No stored token found, attempting cookie-based validation");
       }
       try {
         const response = await newRequest.get('/api/auth/validate-token', { 
@@ -39,6 +38,9 @@ const Authentication = ({ setUserRole }) => {
           navigate(response.data.role === 'farmer' ? '/farmer_home' : '/expert_home');
         }
       } catch (error) {
+        if (storedToken) {
+          localStorage.removeItem('token');
+        }
         console.log("Token validation failed, proceed to login/signup");
       }
     };
