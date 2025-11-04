@@ -17,6 +17,7 @@ const ExpertSidebar = ({ setUserRole }) => {
     try {
       await newRequest.post("/api/auth/signout");
       localStorage.removeItem("userRole");
+      localStorage.removeItem("token");
       setUserRole(null);
       navigate('/');
     } catch (err) {

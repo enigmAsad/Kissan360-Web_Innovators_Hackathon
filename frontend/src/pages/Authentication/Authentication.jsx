@@ -9,6 +9,9 @@ const Authentication = ({ setUserRole }) => {
   const containerRef = useRef(null);
   const navigate = useNavigate();
   
+  const toApiRole = (uiRole) => (uiRole === 'expert' ? 'admin' : uiRole);
+  const toUiRole = (apiRole) => (apiRole === 'admin' ? 'expert' : apiRole);
+
   // Signup state
   const [signupName, setSignupName] = useState('');
   const [signupEmail, setSignupEmail] = useState('');
@@ -22,17 +25,28 @@ const Authentication = ({ setUserRole }) => {
 
   useEffect(() => {
     const checkToken = async () => {
+      const storedToken = localStorage.getItem('token');
+      if (!storedToken) {
+        console.log("No stored token found; skipping token validation call");
+        return;
+      }
       try {
         const response = await newRequest.get('/api/auth/validate-token', { 
           withCredentials: true 
         });
         if (response.data && response.data.role) {
-          toast.success(response.data.message)
-          setUserRole(response.data.role);
-          navigate(response.data.role === 'farmer' ? '/farmer_home' : '/expert_home');
+          if (response.data.message) {
+            toast.success(response.data.message);
+          }
+          const uiRole = toUiRole(response.data.role);
+          setUserRole(uiRole);
+          navigate(uiRole === 'farmer' ? '/farmer_home' : '/expert_home');
         }
       } catch (error) {
-        console.log("No valid token found, proceed to login/signup");
+        if (storedToken) {
+          localStorage.removeItem('token');
+        }
+        console.log("Token validation failed, proceed to login/signup");
       }
     };
     checkToken();
@@ -53,11 +67,15 @@ const Authentication = ({ setUserRole }) => {
         name: signupName,
         email: signupEmail,
         password: signupPassword,
-        role: signupRole,
+        role: toApiRole(signupRole),
       }, { withCredentials: true });
       toast.success(response.data.message);
-      setUserRole(signupRole);
-      navigate(signupRole === 'farmer' ? '/farmer_home' : '/expert_home');
+      if (response.data?.token) {
+        localStorage.setItem('token', response.data.token);
+      }
+      const roleFromResponse = toUiRole(response.data?.role) || signupRole;
+      setUserRole(roleFromResponse);
+      navigate(roleFromResponse === 'farmer' ? '/farmer_home' : '/expert_home');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Signup failed');
     }
@@ -69,11 +87,15 @@ const Authentication = ({ setUserRole }) => {
       const response = await newRequest.post('/api/auth/signin', {
         email: signinEmail,
         password: signinPassword,
-        role: signinRole,
+        role: toApiRole(signinRole),
       }, { withCredentials: true });
       toast.success(response.data.message);
-      setUserRole(signinRole);
-      navigate(signinRole === 'farmer' ? '/farmer_home' : '/expert_home');
+      if (response.data?.token) {
+        localStorage.setItem('token', response.data.token);
+      }
+      const roleFromResponse = toUiRole(response.data?.role) || signinRole;
+      setUserRole(roleFromResponse);
+      navigate(roleFromResponse === 'farmer' ? '/farmer_home' : '/expert_home');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Signin failed');
     }

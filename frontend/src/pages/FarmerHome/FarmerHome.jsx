@@ -33,8 +33,8 @@ const Home = ({ setUserRole }) => {
         const notificationsResponse = await newRequest.get("/api/farming-notifications?region=Kolkata"); 
         setNotifications(notificationsResponse.data || { alerts: "" });
       } catch (error) {
-        console.error("Error fetching notifications:", error);
-        setNotifications({ alerts: "" }); 
+        console.warn("Falling back to default notifications", error?.response?.status);
+        setNotifications({ alerts: 'Update not available\nCheck local advisories' }); 
       }
 
       // Fetch appointments from backend

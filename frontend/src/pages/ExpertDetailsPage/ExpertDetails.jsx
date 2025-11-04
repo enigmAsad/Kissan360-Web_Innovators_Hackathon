@@ -46,14 +46,8 @@ const ExpertDetails = () => {
 
   const handleBookAppointment = async () => {
     try {
-        const token = document.cookie.replace('token=', ''); // Retrieve the token from the cookie
-        
         const response = await newRequest.post('/api/appointments/book', {
-            expertId: id, // The server should get farmerId from the token in the cookie
-        }, {
-            headers: {
-                Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
-            }
+            expertId: id, // The server should derive farmerId from the authenticated token
         });
 
         if (response.status === 200) {

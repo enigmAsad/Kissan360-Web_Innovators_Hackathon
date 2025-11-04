@@ -1,18 +1,27 @@
 import axios from 'axios';
 
-const token = document.cookie
-  .split('; ')
-  .find((row) => row.startsWith('token='))
-  ?.split('=')[1];
+const API_BASE_URL = import.meta.env?.VITE_API_URL || "https://agri-connect-ruwo.onrender.com";
 
 const newRequest = axios.create({
-  // baseURL: "https://weather-xgyu.onrender.com", // this is for the original link dont use this please
-  baseURL: "https://agri-connect-ruwo.onrender.com",
-  // baseURL: "http://localhost:8000",
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-  withCredentials: true,  // This keeps cookies in requests
+  baseURL: API_BASE_URL,
+  withCredentials: true,
+});
+
+newRequest.interceptors.request.use((config) => {
+  if (!config.headers) {
+    config.headers = {};
+  }
+
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    } else {
+      delete config.headers.Authorization;
+    }
+  }
+
+  return config;
 });
 
 export default newRequest;

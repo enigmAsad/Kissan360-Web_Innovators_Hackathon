@@ -1,19 +1,10 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
+import { verifyToken } from '../middleware/jwt.js';
 
 const router = express.Router();
 
-router.get('/validate-token', (req, res) => {
-  const token = req.cookies.token; // Get token from cookies
-
-  if (!token) return res.status(401).json({ message: "No token found" });
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_KEY);
-    res.json({ userId: decoded.id, role: decoded.role }); // Send user data if token is valid
-  } catch (err) {
-    res.status(401).json({ message: "Invalid token" });
-  }
+router.get('/validate-token', verifyToken, (req, res) => {
+  res.json({ userId: req.userId, role: req.userRole });
 });
 
 export default router;

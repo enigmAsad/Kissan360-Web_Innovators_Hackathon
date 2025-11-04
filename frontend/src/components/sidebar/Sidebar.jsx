@@ -21,6 +21,8 @@ const Sidebar = ({setUserRole}) => {
     try{
       await newRequest.post("/api/auth/signout");
       localStorage.removeItem("currentUser");
+      localStorage.removeItem("token");
+      localStorage.removeItem("userRole");
       setUserRole(null);
       navigate('/');
     }catch(err){
