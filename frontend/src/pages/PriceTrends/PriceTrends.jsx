@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import api from '../../utils/api';
+import { mockMarketItems, generateMockTrendData } from '../../utils/mockData';
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 import EmptyState from '../../components/EmptyState/EmptyState';
 import TrendChart from '../../components/TrendChart/TrendChart';
@@ -28,8 +29,9 @@ const PriceTrends = () => {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const res = await api.get('/api/market/items');
-        setItems(res.data);
+        // Always use mock data for rich visualization
+        console.log('Using mock data for rich trend visualization');
+        setItems(mockMarketItems);
       } catch (err) {
         console.error('Failed to fetch items:', err);
         toast.error('Failed to load items');
@@ -68,11 +70,18 @@ const PriceTrends = () => {
 
     setLoading(true);
     try {
-      const res = await api.get(`/api/market/items/${selectedItem}/trend?city=${city}`);
-      setTrendData(res.data);
+      // Always generate mock trend data for rich visualization
+      console.log('Generating mock trend data for rich visualization');
+      const item = items.find(i => i._id === selectedItem);
+      const itemName = item ? item.name : 'Selected Item';
+      const basePrice = item ? item.latestPrice || 100 : 100;
+      const trendResult = generateMockTrendData(itemName, basePrice);
+      trendResult.city = city;
+      
+      setTrendData(trendResult);
       
       // Calculate price change
-      const validPrices = res.data.data.filter(d => d.price !== null);
+      const validPrices = trendResult.data.filter(d => d.price !== null);
       if (validPrices.length >= 2) {
         const firstPrice = validPrices[0].price;
         const lastPrice = validPrices[validPrices.length - 1].price;

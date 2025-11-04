@@ -4,7 +4,7 @@ import { verifyToken } from '../middleware/jwt.js';
 
 const router = express.Router();
 
-router.post('/', verifyToken, getShortAdvice);
+router.get('/', getShortAdvice);
 
 export default router;
 

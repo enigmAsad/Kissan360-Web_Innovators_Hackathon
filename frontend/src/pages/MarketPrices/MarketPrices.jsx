@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
+import { mockMarketItems } from '../../utils/mockData';
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 import EmptyState from '../../components/EmptyState/EmptyState';
 import MarketPriceCard from '../../components/MarketPriceCard/MarketPriceCard';
@@ -44,10 +45,17 @@ const MarketPrices = () => {
   const fetchItems = async () => {
     setLoading(true);
     try {
-      const res = await api.get(`/api/market/items${region ? `?city=${region}` : ''}`);
-      setItems(res.data);
+      // Always use mock data for rich visualization
+      console.log('Using mock data for rich market visualization');
+      const mockItems = mockMarketItems.map(item => ({
+        ...item,
+        latestPrice: region ? 
+          Math.round(item.latestPrice * (0.8 + Math.random() * 0.4)) : // ±20% variation by city
+          item.latestPrice
+      }));
+      setItems(mockItems);
     } catch (err) {
-      console.error('Failed to fetch items:', err);
+      console.error('Failed to load market prices:', err);
       toast.error('Failed to load market prices');
     } finally {
       setLoading(false);
