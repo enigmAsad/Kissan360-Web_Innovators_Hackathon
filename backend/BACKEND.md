@@ -133,6 +133,12 @@ This backend provides the API for a farming assistance platform. It handles user
     -   Controller: `getRecommendations`
     -   Powered by the OpenAI Responses API to produce prioritized tasks, crop care tips, and precautionary advice from farmer inputs.
 
+### Short Advice (`/api/short-advice`)
+
+-   `POST /`: Request quick actionable alerts for farmers. (Requires authentication)
+    -   Controller: `getShortAdvice`
+    -   Returns 2–3 concise, input-driven advisories such as weather or market reminders.
+
 ### Records (`/api/records`)
 
 -   `POST /add`: Add a new financial record. (Requires authentication)
