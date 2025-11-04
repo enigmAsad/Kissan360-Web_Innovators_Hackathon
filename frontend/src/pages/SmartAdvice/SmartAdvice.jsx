@@ -147,7 +147,7 @@ const SmartAdvice = () => {
         <div className="advice-result">
           <div className="result-header">
             <LightbulbIcon />
-            <h2>Recommendations for {advice.item.name} in {advice.city}</h2>
+            <h2>Recommendations for {advice.item?.name || 'Selected Item'} in {advice.city}</h2>
           </div>
 
           <div className="advice-list">
