@@ -2,7 +2,7 @@ import axios from 'axios';
 import FormData from 'form-data';
 
 const VOICE_SERVICE_URL = (process.env.VOICE_SERVICE_URL || 'http://localhost:8001').replace(/\/$/, '');
-const VOICE_SERVICE_TIMEOUT_MS = Number(process.env.VOICE_SERVICE_TIMEOUT_MS || 20000);
+const VOICE_SERVICE_TIMEOUT_MS = Number(process.env.VOICE_SERVICE_TIMEOUT_MS || 1200000);
 
 const buildFormData = (file, body) => {
     const formData = new FormData();

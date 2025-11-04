@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Sidebar } from '../Sidebar/Sidebar';
+import VoiceAssistantWidget from '../VoiceAssistantWidget/VoiceAssistantWidget';
 import './DashboardLayout.scss';
 
 const DashboardLayout = () => {
@@ -10,6 +11,7 @@ const DashboardLayout = () => {
       <div className="main-content">
         <Outlet />
       </div>
+      <VoiceAssistantWidget />
     </div>
   );
 };
