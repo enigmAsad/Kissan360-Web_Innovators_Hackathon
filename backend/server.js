@@ -12,6 +12,7 @@ import profileRoutes from './routes/profileRoutes.js';
 import marketRoutes from './routes/marketRoutes.js';
 import weatherRoute from './routes/weatherRoute.js';
 import shortAdviceRoute from './routes/shortAdviceRoute.js';
+import voiceRoutes from './routes/voiceRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -34,6 +35,7 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/market', marketRoutes);
 app.use('/api/weather', weatherRoute);
 app.use('/api/short-advice', shortAdviceRoute);
+app.use('/api/voice', voiceRoutes);
 
 // DB connect
 const connection = async () => {

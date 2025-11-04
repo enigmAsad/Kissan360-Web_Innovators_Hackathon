@@ -161,6 +161,13 @@ This backend provides the API for a farming assistance platform. It handles user
     -   Controller: `getShortAdvice`
     -   Returns 2–3 concise, input-driven advisories such as weather or market reminders.
 
+### Voice Assistant (`/api/voice`)
+
+-   `POST /interact`: Proxy a farmer voice query to the dedicated voice assistant microservice.
+    -   Controller: `proxyVoiceInteraction`
+    -   Accepts either multipart uploads (`audio` field) or base64 payloads (`audioBase64`). Optional `language` overrides the default Urdu loop.
+    -   Response mirrors the downstream service (`transcript`, `response_text`, `audio_base64`, `metadata`). Errors surface as `502 Voice assistant unavailable` when the service cannot be reached.
+
 ### Market Data (`/api/market`)
 
 -   `POST /items`: Create a new market item. (Requires `admin` role)
@@ -293,3 +300,6 @@ The backend expects the following keys in `backend/.env`:
 -   `OPENAI_API_KEY`: Optional. Credential for OpenAI API integrations (used in recommendations, alerts, etc.).
 -   `MAPBOX_TOKEN`: Optional. Access token for Mapbox services used by the weather module.
 -   `NEWS_API_KEY`: Optional. API key for the farming news feed (NewsAPI).
+-   `VOICE_SERVICE_URL`: Optional. Base URL of the voice assistant microservice (default: `http://localhost:8001`).
+-   `VOICE_SERVICE_TIMEOUT_MS`: Optional. HTTP client timeout (ms) when proxying voice requests (default: `20000`).
+-   `MAX_VOICE_UPLOAD_BYTES`: Optional. Max upload size for proxied audio in bytes (default: 5 MiB).

@@ -126,7 +126,7 @@ class OpenAIService:
 
         system_prompt = (
             "You are Zarai Dost, a caring agricultural expert helping Pakistani farmers. "
-            "Respond with empathy, concise actionable steps, and mention relevant local context when known. "
+            "Respond with empathy, concise actionable steps, and mention relevant local context when known. Keep responses short and concise"
             f"Always reply using language code '{language}'."
         )
 

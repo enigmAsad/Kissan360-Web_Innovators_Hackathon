@@ -177,6 +177,15 @@ Generate short advice using recent price trend; optionally include rain signal f
 - Success (200): `{ item: { id, name }, city, advice: ["..."] }`
 - Notes: Uses last 3 days of prices for trend; no weather API calls are made here.
 
+## Voice Assistant
+
+### POST /api/voice/interact
+Proxy a farmer's voice query to the dedicated voice assistant service.
+- Accepts either `multipart/form-data` with the field `audio` (binary upload) **or** JSON containing `audioBase64`.
+- Optional query/body field: `language=ur` (defaults to the microservice setting).
+- Success (200): Mirrors the voice service payload, e.g. `{ language, transcript, response_text, audio_base64, metadata }`.
+- Errors from the downstream service are surfaced with relevant `error` metadata and HTTP status (502 when the service is unreachable).
+
 ## Market Data
 
 ### POST /api/market/items
