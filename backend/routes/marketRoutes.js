@@ -1,7 +1,7 @@
 import express from 'express'
 import { verifyToken } from '../middleware/jwt.js'
 import { requireAdmin } from '../middleware/roles.js'
-import { createItem, updateItem, disableItem, listItems, upsertPrice, getTrend, compareItems } from '../controllers/marketController.js'
+import { createItem, updateItem, disableItem, listItems, upsertPrice, getTrend, compareItems, priceSummary } from '../controllers/marketController.js'
 
 const router = express.Router()
 
@@ -12,6 +12,7 @@ router.delete('/items/:id', verifyToken, requireAdmin, disableItem)
 
 // Admin: upsert daily price
 router.post('/prices', verifyToken, requireAdmin, upsertPrice)
+router.get('/prices/summary', verifyToken, requireAdmin, priceSummary)
 
 // Farmer/Admin: read endpoints
 router.get('/items', listItems)

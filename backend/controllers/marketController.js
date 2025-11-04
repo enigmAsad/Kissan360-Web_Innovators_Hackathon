@@ -146,3 +146,26 @@ export const compareItems = async (req, res) => {
     }
 }
 
+export const priceSummary = async (req, res) => {
+    try {
+        const { city } = req.query;
+        const match = {};
+        if (city) match.city = city;
+        const totalItems = await MarketItem.countDocuments({ enabled: true });
+        const totalPrices = await MarketPrice.countDocuments(match);
+        const avgAgg = await MarketPrice.aggregate([
+            { $match: match },
+            { $group: { _id: null, avgPrice: { $avg: '$price' } } }
+        ]);
+        const latest = await MarketPrice.find(match).sort({ date: -1 }).limit(1).lean();
+        res.json({
+            totalItems,
+            totalPrices,
+            avgPrice: avgAgg.length ? avgAgg[0].avgPrice : null,
+            lastPriceDate: latest.length ? latest[0].date : null
+        });
+    } catch (err) {
+        res.status(500).json({ message: 'Failed to compute summary', error: err.message });
+    }
+}
+

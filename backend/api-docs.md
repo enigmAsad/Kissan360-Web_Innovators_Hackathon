@@ -92,6 +92,17 @@ Returns farming-related news articles from NewsAPI.
 - Success (200): `Article[]` (fields from NewsAPI)
 - Error (500): `{ message: "Error fetching news" }`
 
+## Weather
+
+### GET /api/weather/current
+- Query: `city=Lahore`
+- Success (200):
+```
+{ "city": "Lahore", "country": "PK", "temperatureC": 30.5, "humidity": 48, "condition": "clear sky", "icon": "01d", "windSpeed": 3.6, "dt": 1730716800 }
+```
+- Env required: `OPENWEATHER_API_KEY` (or `WEATHER_API_KEY`)
+- Error (500): `{ message: "Failed to fetch weather" }`
+
 ## Market Data
 
 ### POST /api/market/items
@@ -132,10 +143,16 @@ Returns farming-related news articles from NewsAPI.
 - Query: `items=tomatoId,potatoId&city=Lahore`
 - Success (200): `{ city, series: [{ itemId, name, unit, data: [{ date, price }] }] }`
 
+-### GET /api/market/prices/summary
+- Auth: Admin only
+- Query: `city=Lahore` (optional)
+- Success (200): `{ totalItems, totalPrices, avgPrice, lastPriceDate }`
+
 ## Environment variables
 - `MONGO_URL` (required)
 - `JWT_KEY` (required)
 - `CORS_ORIGIN` (default `http://localhost:5173`)
 - `NODE_ENV` (affects cookie flags)
 - `NEWS_API_KEY` (for `/api/news/farming_news`)
+- `OPENWEATHER_API_KEY` or `WEATHER_API_KEY` (for `/api/weather/current`)
 
