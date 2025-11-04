@@ -24,7 +24,8 @@ const Authentication = ({ setUserRole }) => {
     const checkToken = async () => {
       const storedToken = localStorage.getItem('token');
       if (!storedToken) {
-        console.log("No stored token found, attempting cookie-based validation");
+        console.log("No stored token found; skipping token validation call");
+        return;
       }
       try {
         const response = await newRequest.get('/api/auth/validate-token', { 
