@@ -1,0 +1,157 @@
+.post-detail {
+  .back-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 1.5rem;
+
+    svg {
+      font-size: 1.125rem;
+    }
+
+    &:hover {
+      background: rgba(99, 102, 241, 0.2);
+      border-color: #8b5cf6;
+      color: #fff;
+    }
+  }
+
+  .post-content-wrapper {
+    background: rgba(99, 102, 241, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+
+    .post-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+
+      .author-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        .author-avatar {
+          width: 56px;
+          height: 56px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #fff;
+
+          svg {
+            font-size: 1.75rem;
+          }
+        }
+
+        h3 {
+          font-size: 1.125rem;
+          font-weight: 600;
+          color: #fff;
+          margin: 0 0 0.25rem 0;
+        }
+
+        .post-meta {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 0.875rem;
+          color: rgba(255, 255, 255, 0.6);
+
+          svg {
+            font-size: 1rem;
+          }
+        }
+      }
+
+      .post-actions {
+        display: flex;
+        gap: 0.75rem;
+
+        button {
+          padding: 0.625rem 1.25rem;
+          border-radius: 8px;
+          font-size: 0.875rem;
+          font-weight: 600;
+          font-family: 'Inter', sans-serif;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          border: none;
+
+          svg {
+            font-size: 1rem;
+          }
+
+          &.delete-btn {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+
+            &:hover {
+              background: rgba(239, 68, 68, 0.3);
+              border-color: #f87171;
+            }
+          }
+        }
+      }
+    }
+
+    .post-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #fff;
+      margin: 0 0 1rem 0;
+      line-height: 1.3;
+    }
+
+    .post-content {
+      font-size: 1.0625rem;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.8;
+      margin: 0;
+      white-space: pre-wrap;
+    }
+  }
+
+  .comments-section {
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #fff;
+      margin: 0 0 1.5rem 0;
+    }
+
+    .comments-list {
+      margin-top: 1.5rem;
+
+      .no-comments {
+        text-align: center;
+        padding: 3rem 2rem;
+        color: rgba(255, 255, 255, 0.6);
+        font-style: italic;
+      }
+    }
+  }
+}
+
