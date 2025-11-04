@@ -57,3 +57,26 @@ Notes:
 - Unique index on `(item, city, date)` ensures only one record per day per city.
 - Trend endpoints will query the last 7 documents sorted by `date`.
 - If fewer than 7 entries exist, backend will simulate/interpolate once we implement the controller (see README plan).
+
+## Comment (comment.model.js)
+- _id: string (Mongo ObjectId)
+- post: string (Post _id) or populated object
+- content: string (required)
+- author: string (User _id) or populated User (name)
+- createdAt / updatedAt: ISO datetime
+
+Notes:
+- Create payload: `{ content }` (post id is in the URL path)
+- List endpoint returns newest first; author is populated with `name`.
+- Only the author (or admin) can update/delete a comment.
+
+## FarmerDetails (farmerDetail.model.js) — used for region only
+- _id: string
+- user: string (User _id, unique)
+- region: string (preferred city/region for market filtering)
+
+Notes:
+- Only `region` is used by the current backend.
+- Endpoints:
+  - GET `/api/profile/region` → `{ region }`
+  - PUT `/api/profile/region` with `{ region }`

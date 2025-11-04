@@ -84,6 +84,47 @@ Update a post you own.
 Delete a post you own.
 - Success (200): `{ message: "Post deleted successfully" }`
 
+## Comments
+
+### GET /api/comments/post/:postId
+List comments for a post (newest first).
+- Success (200): `Comment[]`
+
+### POST /api/comments/post/:postId [auth]
+Create a comment on a post.
+- Body:
+```
+{ "content": "Great update!" }
+```
+- Success (201): `{ message, comment }`
+
+### PATCH /api/comments/:id [auth]
+Update your comment.
+- Body:
+```
+{ "content": "Edited comment" }
+```
+- Success (200): `{ message, comment }`
+- Not authorized/not found (403/404): `{ message }`
+
+### DELETE /api/comments/:id [auth]
+Delete your comment (admin can moderate).
+- Success (200): `{ message: "Comment deleted" }`
+
+## Profile (Farmer Preference)
+
+### GET /api/profile/region [auth: farmer]
+Return the farmer's saved region.
+- Success (200): `{ region: "Lahore" | null }`
+
+### PUT /api/profile/region [auth: farmer]
+Create/update the farmer's preferred region.
+- Body:
+```
+{ "region": "Karachi" }
+```
+- Success (200): `{ message: "Region saved", region: "Karachi" }`
+
 ## Farming News
 
 ### GET /api/news/farming_news
@@ -102,6 +143,14 @@ Returns farming-related news articles from NewsAPI.
 ```
 - Env required: `OPENWEATHER_API_KEY` (or `WEATHER_API_KEY`)
 - Error (500): `{ message: "Failed to fetch weather" }`
+
+## Short Advice
+
+### GET /api/short-advice
+Generate short advice using recent price trend; optionally include rain signal from FE.
+- Query: `item=<itemId>&city=Lahore&rainExpected=true|false`
+- Success (200): `{ item: { id, name }, city, advice: ["..."] }`
+- Notes: Uses last 3 days of prices for trend; no weather API calls are made here.
 
 ## Market Data
 

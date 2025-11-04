@@ -7,8 +7,8 @@ import authRoute from './routes/authRoute.js';
 import validateTokenRoutes from './routes/validateTokenRoutes.js';
 import postRoutes from './routes/postRoutes.js';
 import farmingNewsRoute from './routes/farmingNewsRoute.js';
-import marketRoutes from './routes/marketRoutes.js';
-import weatherRoutes from './routes/weatherRoutes.js';
+import commentRoutes from './routes/commentRoutes.js';
+import profileRoutes from './routes/profileRoutes.js';
 import weatherRoute from './routes/weatherRoute.js';
 import shortAdviceRoute from './routes/shortAdviceRoute.js';
 
@@ -29,8 +29,8 @@ app.use('/api/auth', authRoute);
 app.use('/api/auth', validateTokenRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/news', farmingNewsRoute);
-app.use('/api/market', marketRoutes);
-app.use('/api/weather', weatherRoutes);
+app.use('/api/comments', commentRoutes);
+app.use('/api/profile', profileRoutes);
 app.use('/api/weather', weatherRoute);
 app.use('/api/short-advice', shortAdviceRoute);
 

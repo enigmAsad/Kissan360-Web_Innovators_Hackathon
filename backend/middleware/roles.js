@@ -5,3 +5,10 @@ export const requireAdmin = (req, res, next) => {
     next();
 };
 
+export const requireFarmer = (req, res, next) => {
+    if (req.userRole !== 'farmer') {
+        return res.status(403).json({ message: 'Farmer only' });
+    }
+    next();
+};
+
