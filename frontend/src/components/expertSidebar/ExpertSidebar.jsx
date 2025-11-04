@@ -1,16 +1,15 @@
 import React from "react";
-import BlogIcon from "@mui/icons-material/EditOutlined";
-import ViewBlogsIcon from "@mui/icons-material/ViewListOutlined";
-import RequestIcon from "@mui/icons-material/EventNoteOutlined";
-import HistoryIcon from "@mui/icons-material/HistoryOutlined";
-import ProfileIcon from "@mui/icons-material/AccountCircleOutlined";
+import DashboardIcon from "@mui/icons-material/DashboardOutlined";
+import AddIcon from "@mui/icons-material/AddCircleOutline";
+import EditIcon from "@mui/icons-material/EditOutlined";
+import DeleteIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import LogoutIcon from "@mui/icons-material/ExitToAppOutlined";
 import "./ExpertSidebar.scss";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import logo from '../../assets/logo.png';
 import newRequest from "../../utils/newRequest";
 
-const ExpertSidebar = ({ setUserRole }) => {
+const ExpertSidebar = ({ setUserRole, activeSection, setActiveSection }) => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -28,41 +27,43 @@ const ExpertSidebar = ({ setUserRole }) => {
   return (
     <div className="sidebar">
       <div className="top">
-        <Link to="/" style={{ textDecoration: "none" }}>
-          <img src={logo} width={30} height={30} alt="" />
-          <span className="logo">AgriConnect</span>
-        </Link>
+        <img src={logo} width={30} height={30} alt="Logo" />
+        <span className="logo">AgriConnect</span>
       </div>
       <hr />
       <div className="bottom">
         <div className="card-container">
-          <Link to="/createPost" style={{ textDecoration: "none" }}>
-            <div className="card">
-              <BlogIcon className="icon" />
-              <span>Create New Blog</span>
-            </div>
-          </Link>
-          <Link to="/viewMyBlogs" style={{ textDecoration: "none" }}>
-            <div className="card">
-              <ViewBlogsIcon className="icon" />
-              <span>View Your Blogs</span>
-            </div>
-          </Link>
-          <Link to="/appointment_requests" style={{ textDecoration: "none" }}>
-            <div className="card">
-              <RequestIcon className="icon" />
-              <span>Appointment Requests</span>
-            </div>
-          </Link>
+          <div 
+            className={`card ${activeSection === 'dashboard' ? 'active' : ''}`}
+            onClick={() => setActiveSection('dashboard')}
+          >
+            <DashboardIcon className="icon" />
+            <span>Dashboard</span>
+          </div>
+          <div 
+            className={`card ${activeSection === 'addCrop' ? 'active' : ''}`}
+            onClick={() => setActiveSection('addCrop')}
+          >
+            <AddIcon className="icon" />
+            <span>Add Crop</span>
+          </div>
+          <div 
+            className={`card ${activeSection === 'updateCrop' ? 'active' : ''}`}
+            onClick={() => setActiveSection('updateCrop')}
+          >
+            <EditIcon className="icon" />
+            <span>Update Crop</span>
+          </div>
+          <div 
+            className={`card ${activeSection === 'deleteCrop' ? 'active' : ''}`}
+            onClick={() => setActiveSection('deleteCrop')}
+          >
+            <DeleteIcon className="icon" />
+            <span>Delete Crop</span>
+          </div>
         </div>
 
         <div className="profile-actions">
-          <Link to="/expert-profile" style={{ textDecoration: "none" }}>
-            <div className="action">
-              <ProfileIcon className="icon" />
-              <span>Profile</span>
-            </div>
-          </Link>
           <div onClick={handleLogout} className="action">
             <LogoutIcon className="icon" />
             <span>Logout</span>
