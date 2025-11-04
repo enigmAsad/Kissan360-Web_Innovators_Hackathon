@@ -3,8 +3,17 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login/Login';
 import Signup from './pages/Signup/Signup';
-import FarmerDashboard from './pages/FarmerDashboard/FarmerDashboard';
 import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
+import DashboardLayout from './components/Layout/DashboardLayout';
+import FarmerHome from './pages/FarmerDashboard/FarmerHome';
+import MarketPrices from './pages/MarketPrices/MarketPrices';
+import PriceTrends from './pages/PriceTrends/PriceTrends';
+import Weather from './pages/Weather/Weather';
+import SmartAdvice from './pages/SmartAdvice/SmartAdvice';
+import ForumList from './pages/Forum/ForumList';
+import PostDetail from './pages/Forum/PostDetail';
+import MyPosts from './pages/MyPosts/MyPosts';
+import ProfileSettings from './pages/Profile/ProfileSettings';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './app.css';
@@ -25,7 +34,8 @@ const ProtectedRoute = ({ children, allowedRole }) => {
   }
 
   if (allowedRole && user.role !== allowedRole) {
-    return <Navigate to={`/${user.role}/dashboard`} replace />;
+    const dashboardPath = user.role === 'admin' ? '/admin-dashboard' : '/farmer-dashboard';
+    return <Navigate to={dashboardPath} replace />;
   }
 
   return children;
@@ -43,7 +53,8 @@ const PublicRoute = ({ children }) => {
   }
 
   if (user) {
-    return <Navigate to={`/${user.role}/dashboard`} replace />;
+    const dashboardPath = user.role === 'admin' ? '/admin-dashboard' : '/farmer-dashboard';
+    return <Navigate to={dashboardPath} replace />;
   }
 
   return children;
@@ -79,15 +90,25 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/farmer/dashboard"
+          path="/farmer-dashboard"
           element={
             <ProtectedRoute allowedRole="farmer">
-              <FarmerDashboard />
+              <DashboardLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<FarmerHome />} />
+          <Route path="market-prices" element={<MarketPrices />} />
+          <Route path="price-trends" element={<PriceTrends />} />
+          <Route path="weather" element={<Weather />} />
+          <Route path="smart-advice" element={<SmartAdvice />} />
+          <Route path="forum" element={<ForumList />} />
+          <Route path="forum/:id" element={<PostDetail />} />
+          <Route path="my-posts" element={<MyPosts />} />
+          <Route path="profile" element={<ProfileSettings />} />
+        </Route>
         <Route
-          path="/admin/dashboard"
+          path="/admin-dashboard"
           element={
             <ProtectedRoute allowedRole="admin">
               <AdminDashboard />

@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+.farmer-home {
+  font-family: 'Inter', sans-serif;
+  
+  .welcome-section {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .welcome-text {
+      h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #fff;
+        margin: 0 0 0.5rem 0;
+      }
+
+      p {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.7);
+        margin: 0;
+      }
+    }
+
+    .welcome-icon {
+      font-size: 4rem;
+      color: #8b5cf6;
+      opacity: 0.5;
+      
+      svg {
+        font-size: 4rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .welcome-icon {
+        display: none;
+      }
+    }
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .quick-actions-section {
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #fff;
+      margin: 0 0 1.5rem 0;
+    }
+
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+
+      .action-card {
+        background: rgba(99, 102, 241, 0.1);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 16px;
+        padding: 2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3);
+          border-color: var(--action-color);
+          background: rgba(99, 102, 241, 0.15);
+        }
+
+        .action-icon {
+          font-size: 2.5rem;
+          margin-bottom: 1rem;
+          
+          svg {
+            font-size: 2.5rem;
+          }
+        }
+
+        h3 {
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: #fff;
+          margin: 0 0 0.5rem 0;
+        }
+
+        p {
+          font-size: 0.875rem;
+          color: rgba(255, 255, 255, 0.7);
+          margin: 0;
+          line-height: 1.5;
+        }
+      }
+    }
+  }
+}
+
