@@ -29,7 +29,7 @@ const ProfileSettings = () => {
   const fetchRegion = async () => {
     setLoading(true);
     try {
-      const res = await api.get('/profile/region');
+      const res = await api.get('/api/profile/region');
       setRegion(res.data.region || '');
     } catch (err) {
       console.error('Failed to fetch region:', err);
@@ -48,7 +48,7 @@ const ProfileSettings = () => {
 
     setSaving(true);
     try {
-      await api.put('/profile/region', { region });
+      await api.put('/api/profile/region', { region });
       toast.success('Region preference saved successfully!');
     } catch (err) {
       console.error('Failed to save region:', err);

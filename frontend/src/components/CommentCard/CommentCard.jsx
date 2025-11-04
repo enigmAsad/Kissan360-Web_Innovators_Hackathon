@@ -13,7 +13,7 @@ const CommentCard = ({ comment, currentUserId, onDelete }) => {
     if (!window.confirm('Are you sure you want to delete this comment?')) return;
 
     try {
-      await api.delete(`/comments/${comment._id}`);
+      await api.delete(`/api/comments/${comment._id}`);
       onDelete();
     } catch (err) {
       console.error('Failed to delete comment:', err);

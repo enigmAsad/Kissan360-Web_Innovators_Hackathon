@@ -24,7 +24,7 @@ const MarketPrices = () => {
     // Load saved region
     const loadRegion = async () => {
       try {
-        const res = await api.get('/profile/region');
+        const res = await api.get('/api/profile/region');
         if (res.data.region) {
           setRegion(res.data.region);
         }
@@ -44,7 +44,7 @@ const MarketPrices = () => {
   const fetchItems = async () => {
     setLoading(true);
     try {
-      const res = await api.get(`/market/items${region ? `?city=${region}` : ''}`);
+      const res = await api.get(`/api/market/items${region ? `?city=${region}` : ''}`);
       setItems(res.data);
     } catch (err) {
       console.error('Failed to fetch items:', err);
@@ -57,7 +57,7 @@ const MarketPrices = () => {
   const handleRegionChange = async (newRegion) => {
     setRegion(newRegion);
     try {
-      await api.put('/profile/region', { region: newRegion });
+      await api.put('/api/profile/region', { region: newRegion });
       toast.success(`Region updated to ${newRegion}`);
     } catch (err) {
       console.error('Failed to update region:', err);

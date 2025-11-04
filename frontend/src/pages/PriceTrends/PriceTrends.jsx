@@ -28,7 +28,7 @@ const PriceTrends = () => {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const res = await api.get('/market/items');
+        const res = await api.get('/api/market/items');
         setItems(res.data);
       } catch (err) {
         console.error('Failed to fetch items:', err);
@@ -42,7 +42,7 @@ const PriceTrends = () => {
     const loadRegion = async () => {
       if (!city) {
         try {
-          const res = await api.get('/profile/region');
+          const res = await api.get('/api/profile/region');
           if (res.data.region) {
             setCity(res.data.region);
           }
@@ -68,7 +68,7 @@ const PriceTrends = () => {
 
     setLoading(true);
     try {
-      const res = await api.get(`/market/items/${selectedItem}/trend?city=${city}`);
+      const res = await api.get(`/api/market/items/${selectedItem}/trend?city=${city}`);
       setTrendData(res.data);
       
       // Calculate price change

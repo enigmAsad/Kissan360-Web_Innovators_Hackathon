@@ -28,7 +28,7 @@ const PostDetail = () => {
 
   const fetchPost = async () => {
     try {
-      const res = await api.get(`/posts/${id}`);
+      const res = await api.get(`/api/posts/${id}`);
       setPost(res.data);
     } catch (err) {
       console.error('Failed to fetch post:', err);
@@ -39,7 +39,7 @@ const PostDetail = () => {
 
   const fetchComments = async () => {
     try {
-      const res = await api.get(`/comments/post/${id}`);
+      const res = await api.get(`/api/comments/post/${id}`);
       setComments(res.data);
     } catch (err) {
       console.error('Failed to fetch comments:', err);
@@ -52,7 +52,7 @@ const PostDetail = () => {
     if (!window.confirm('Are you sure you want to delete this post?')) return;
 
     try {
-      await api.delete(`/posts/${id}`);
+      await api.delete(`/api/posts/${id}`);
       toast.success('Post deleted successfully');
       navigate('/farmer-dashboard/forum');
     } catch (err) {

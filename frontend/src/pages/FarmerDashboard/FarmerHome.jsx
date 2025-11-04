@@ -26,8 +26,8 @@ const FarmerHome = () => {
     const fetchStats = async () => {
       try {
         const [itemsRes, postsRes] = await Promise.all([
-          api.get('/market/items'),
-          api.get('/posts/getPost'),
+          api.get('/api/market/items'),
+          api.get('/api/posts/getPost'),
         ]);
 
         setStats({

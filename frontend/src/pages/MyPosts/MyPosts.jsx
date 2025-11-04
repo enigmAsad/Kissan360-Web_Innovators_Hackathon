@@ -23,7 +23,7 @@ const MyPosts = () => {
   const fetchMyPosts = async () => {
     setLoading(true);
     try {
-      const res = await api.get('/posts/user');
+      const res = await api.get('/api/posts/user');
       setPosts(res.data);
     } catch (err) {
       console.error('Failed to fetch my posts:', err);
@@ -41,7 +41,7 @@ const MyPosts = () => {
     if (!window.confirm('Are you sure you want to delete this post?')) return;
 
     try {
-      await api.delete(`/posts/${postId}`);
+      await api.delete(`/api/posts/${postId}`);
       toast.success('Post deleted successfully');
       fetchMyPosts();
     } catch (err) {

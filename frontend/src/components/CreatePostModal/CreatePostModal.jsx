@@ -20,7 +20,7 @@ const CreatePostModal = ({ onClose, onSuccess }) => {
 
     setLoading(true);
     try {
-      await api.post('/posts/create', { title, content });
+      await api.post('/api/posts/create', { title, content });
       onSuccess();
     } catch (err) {
       console.error('Failed to create post:', err);

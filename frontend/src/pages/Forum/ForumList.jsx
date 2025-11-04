@@ -23,7 +23,7 @@ const ForumList = () => {
   const fetchPosts = async () => {
     setLoading(true);
     try {
-      const res = await api.get('/posts/getPost');
+      const res = await api.get('/api/posts/getPost');
       setPosts(res.data);
     } catch (err) {
       console.error('Failed to fetch posts:', err);
