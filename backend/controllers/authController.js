@@ -1,3 +1,4 @@
+import '../config/env.js';
 import User from '../models/auth.model.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';

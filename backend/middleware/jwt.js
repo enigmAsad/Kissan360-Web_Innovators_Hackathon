@@ -1,4 +1,5 @@
 // verifyToken.js
+import '../config/env.js';
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_KEY || process.env.JWT_SECRET;
