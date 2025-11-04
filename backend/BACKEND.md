@@ -16,6 +16,8 @@ This backend provides the API for a farming assistance platform. It handles user
 - cookie-parser for handling cookies
 - cors for enabling Cross-Origin Resource Sharing
 - dotenv for managing environment variables
+- OpenAI Responses API (via official SDK) for agronomy insights and alerts
+- Mapbox Geocoding API for location intelligence
 
 ## API Endpoints
 
@@ -47,6 +49,7 @@ This backend provides the API for a farming assistance platform. It handles user
 
 -   `GET /blog-recommendations`: Get blog topic recommendations for experts.
     -   Controller: `getBlogRecommendations`
+    -   Integrates with the OpenAI Responses API to deliver two concise, expert-ready topics tailored to regional challenges.
 
 ### Crops (`/api/crops`)
 
@@ -100,6 +103,14 @@ This backend provides the API for a farming assistance platform. It handles user
 
 -   `GET /farming-notifications`: Get farming alerts and notifications for a specific region.
     -   Controller: `getFarmingAlerts`
+    -   Uses the OpenAI Responses API to synthesize short actionable alerts based on the provided region context.
+
+### Weather (`/api/weather`)
+
+-   `GET /`: Retrieve curated weather insights for key Pakistani cities.
+    -   Controller: `getPakistanWeather`
+    -   Response: Array of city objects containing condition, temperature, humidity, precipitation chance, category (`rain`, `heat`, `normal`), and mapped coordinates. Includes `generatedAt` timestamp and the Mapbox token required for client-side visualization.
+    -   Combines Mapbox Geocoding with maintained baselines to support the front-end Pakistan heatmap when live feeds are unavailable.
 
 ### Posts (`/api/posts`)
 
@@ -120,6 +131,7 @@ This backend provides the API for a farming assistance platform. It handles user
 
 -   `POST /recommendations`: Get farming recommendations based on provided data.
     -   Controller: `getRecommendations`
+    -   Powered by the OpenAI Responses API to produce prioritized tasks, crop care tips, and precautionary advice from farmer inputs.
 
 ### Records (`/api/records`)
 
@@ -221,3 +233,13 @@ This backend provides the API for a farming assistance platform. It handles user
 ### `verifyToken`
 
 This middleware is used to protect routes that require authentication. It checks for a JWT in the request's cookies. If the token is valid, it decodes the user's ID and role and attaches them to the request object (`req.userId`, `req.userRole`). If the token is missing or invalid, it returns an error.
+
+## Environment Variables
+
+The backend expects the following keys in `backend/.env`:
+
+- `MONGO_URL`: MongoDB connection string.
+- `JWT_SECRET`: Secret used to sign application JWTs.
+- `OPENAI_API_KEY`: Credential for the OpenAI Responses API integrations.
+- `MAPBOX_TOKEN`: Access token for Mapbox services used by the weather module.
+- `NEWS_API_KEY`: API key for the farming news feed (NewsAPI).
