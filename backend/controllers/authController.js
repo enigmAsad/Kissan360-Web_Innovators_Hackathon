@@ -35,8 +35,10 @@ try {
     );
 
     // Set token in cookie
+    const isProduction = process.env.NODE_ENV === 'production';
+    const cookieOptions = { httpOnly: true, secure: isProduction, sameSite: isProduction ? 'None' : 'Lax' };
     return res
-        .cookie('token', token, {secure: true, sameSite: 'None'})  // Setting cookie
+        .cookie('token', token, cookieOptions)
         .status(201)
         .json({ message: "User created successfully", token, role: newUser.role });
 } catch (err) {
@@ -67,8 +69,10 @@ try {
 
     // Set token in cookie
     if(token.length > 0){
+        const isProduction = process.env.NODE_ENV === 'production';
+        const cookieOptions = { httpOnly: true, secure: isProduction, sameSite: isProduction ? 'None' : 'Lax' };
         return res
-            .cookie('token', token, {secure: true, sameSite: 'None'})  // Setting cookie})
+            .cookie('token', token, cookieOptions)
             .status(200)
             .json({ message: "Logged in successfully", token, role: user.role });
     }
@@ -80,7 +84,9 @@ try {
 
 export const signout = async (req, res) => {
 // Clear the cookie on logout
-    res.clearCookie('token',{secure: true, sameSite: 'None'});
+    const isProduction = process.env.NODE_ENV === 'production';
+    const cookieOptions = { httpOnly: true, secure: isProduction, sameSite: isProduction ? 'None' : 'Lax' };
+    res.clearCookie('token', cookieOptions);
     return res.status(200).json({ message: 'Logged out successfully' });
 };
 
