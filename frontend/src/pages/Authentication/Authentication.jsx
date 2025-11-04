@@ -8,10 +8,17 @@ import 'react-toastify/dist/ReactToastify.css';
 const Authentication = ({ setUserRole }) => {
   const containerRef = useRef(null);
   const navigate = useNavigate();
-  const [role, setRole] = useState('farmer'); // Default role is farmer
-  const [name,setName]=useState('')
-  const [email,setEmail]=useState('')
-  const [password,setPassword]=useState('')
+  
+  // Signup state
+  const [signupName, setSignupName] = useState('');
+  const [signupEmail, setSignupEmail] = useState('');
+  const [signupPassword, setSignupPassword] = useState('');
+  const [signupRole, setSignupRole] = useState('farmer');
+  
+  // Signin state
+  const [signinEmail, setSigninEmail] = useState('');
+  const [signinPassword, setSigninPassword] = useState('');
+  const [signinRole, setSigninRole] = useState('farmer');
 
   useEffect(() => {
     const checkToken = async () => {
@@ -29,7 +36,7 @@ const Authentication = ({ setUserRole }) => {
       }
     };
     checkToken();
-  }, [setUserRole]);
+  }, [setUserRole, navigate]);
 
   const handleRegisterClick = () => {
     containerRef.current.classList.add('active');
@@ -39,71 +46,104 @@ const Authentication = ({ setUserRole }) => {
     containerRef.current.classList.remove('active');
   };
 
-  const handleRoleChange = (e) => {
-    setRole(e.target.value);
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await newRequest.post('/api/auth/signup', {
+        name: signupName,
+        email: signupEmail,
+        password: signupPassword,
+        role: signupRole,
+      }, { withCredentials: true });
+      toast.success(response.data.message);
+      setUserRole(signupRole);
+      navigate(signupRole === 'farmer' ? '/farmer_home' : '/expert_home');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Signup failed');
+    }
   };
 
-  const handleSignup = async (e)=>{
-    e.preventDefault()
-    try{
-      const response = await newRequest.post('/api/auth/signup',{
-        name,
-        email,
-        password,
-        role,
-      },{withCredentials: true})
-      toast.success(response.data.message)
-      setUserRole(role)
-      navigate(role === 'farmer'? '/farmer_home': 'expert_home')
-
-    }catch(error){
-      toast.error(error.response?.data?.message || 'Signup failed' )
+  const handleSignin = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await newRequest.post('/api/auth/signin', {
+        email: signinEmail,
+        password: signinPassword,
+        role: signinRole,
+      }, { withCredentials: true });
+      toast.success(response.data.message);
+      setUserRole(signinRole);
+      navigate(signinRole === 'farmer' ? '/farmer_home' : '/expert_home');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Signin failed');
     }
-  }
-
-  const handleSignin = async(e)=>{
-    e.preventDefault()
-    try{
-      const response = await newRequest.post('/api/auth/signin',{
-        email,
-        password,
-        role,
-      },{withCredentials: true})
-      toast.success(response.data.message)
-      setUserRole(role)
-      navigate(role === 'farmer'? '/farmer_home': 'expert_home')
-
-
-    }catch(error){
-      toast.error(error.response?.data?.message || 'Signin failed')
-    }
-  }
+  };
 
   return (
     <div ref={containerRef} className="container" id="container">
-      <ToastContainer position= "top-right" autoClose= {3000} hideProgressBar draggable/>
+      <ToastContainer 
+        position="top-right" 
+        autoClose={3000} 
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <div className="form-container sign-up">
         <form onSubmit={handleSignup}>
           <h1>Create Account</h1>
-          <input type="text" placeholder="Name"   onChange={(e) => setName(e.target.value)}required />
-          <input type="email" placeholder="Email" 
-           onChange={(e) => setEmail(e.target.value)}required />
-          <input type="password" placeholder="Password"  onChange={(e) => setPassword(e.target.value)} required />
-          <select value={role} onChange={handleRoleChange}>
-            <option value="farmer">Farmer</option>
-            <option value="expert">Agriculture Expert</option>
+          <input 
+            type="text" 
+            placeholder="Full Name"
+            value={signupName}
+            onChange={(e) => setSignupName(e.target.value)}
+            required 
+          />
+          <input 
+            type="email" 
+            placeholder="Email Address"
+            value={signupEmail}
+            onChange={(e) => setSignupEmail(e.target.value)}
+            required 
+          />
+          <input 
+            type="password" 
+            placeholder="Password"
+            value={signupPassword}
+            onChange={(e) => setSignupPassword(e.target.value)} 
+            required 
+          />
+          <select value={signupRole} onChange={(e) => setSignupRole(e.target.value)}>
+            <option value="farmer">🌾 Farmer</option>
+            <option value="expert">👨‍🌾 Agriculture Expert</option>
           </select>
-          <button type="submit">Sign Up</button>
+          <button type="submit">Create Account</button>
         </form>
       </div>
       <div className="form-container sign-in">
         <form onSubmit={handleSignin}>
-          <h1>Sign In</h1>
-          <input type="email" placeholder="Email"  onChange={(e) => setEmail(e.target.value)}required />
-          <input type="password" placeholder="Password"  onChange={(e) => setPassword(e.target.value)} required />
-          <select value={role} onChange={handleRoleChange}>
-            <option value="farmer">Farmer</option>
-            <option value="expert">Agriculture Expert</option>
+          <h1>Welcome Back</h1>
+          <input 
+            type="email" 
+            placeholder="Email Address"
+            value={signinEmail}
+            onChange={(e) => setSigninEmail(e.target.value)}
+            required 
+          />
+          <input 
+            type="password" 
+            placeholder="Password"
+            value={signinPassword}
+            onChange={(e) => setSigninPassword(e.target.value)} 
+            required 
+          />
+          <select value={signinRole} onChange={(e) => setSigninRole(e.target.value)}>
+            <option value="farmer">🌾 Farmer</option>
+            <option value="expert">👨‍🌾 Agriculture Expert</option>
           </select>
           <button type="submit">Sign In</button>
         </form>
@@ -112,14 +152,14 @@ const Authentication = ({ setUserRole }) => {
         <div className="toggle">
           <div className="toggle-panel toggle-left">
             <h1>Welcome Back!</h1>
-            <p>Enter your personal details to use all site features</p>
+            <p>Sign in to continue managing your agricultural journey and connect with experts</p>
             <button onClick={handleLoginClick} className="hidden" id="login">
               Sign In
             </button>
           </div>
           <div className="toggle-panel toggle-right">
-            <h1>Hello, Friend!</h1>
-            <p>Register with your personal details to use all site features</p>
+            <h1>Start Your Journey</h1>
+            <p>Join our community of farmers and agricultural experts to revolutionize farming</p>
             <button
               className="hidden"
               id="register"
