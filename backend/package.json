@@ -13,6 +13,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@mapbox/mapbox-sdk": "^0.16.2",
     "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.7",
@@ -22,6 +23,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.7.3",
     "nodemon": "^3.1.7",
+    "openai": "^6.8.0",
     "socket": "^0.14.15",
     "socket.io": "^4.8.1",
     "ws": "^8.18.0"
