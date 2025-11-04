@@ -22,7 +22,19 @@ export const AuthProvider = ({ children }) => {
   const validateToken = async () => {
     try {
       const { data } = await api.get('/api/auth/validate-token');
-      setUser({ id: data.userId, role: data.role });
+      // If token is valid, fetch full user profile
+      try {
+        const profileRes = await api.get('/api/auth/me');
+        setUser({
+          id: profileRes.data._id,
+          name: profileRes.data.name,
+          email: profileRes.data.email,
+          role: profileRes.data.role
+        });
+      } catch (profileErr) {
+        // Fallback to basic user info if profile fetch fails
+        setUser({ id: data.userId, role: data.role, name: 'User' });
+      }
     } catch (error) {
       setUser(null);
     } finally {
@@ -32,13 +44,37 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password, role) => {
     const { data } = await api.post('/api/auth/signin', { email, password, role });
-    setUser({ id: data.userId, role: data.role });
+    // Fetch full user profile after successful login
+    try {
+      const profileRes = await api.get('/api/auth/me');
+      setUser({
+        id: profileRes.data._id,
+        name: profileRes.data.name,
+        email: profileRes.data.email,
+        role: profileRes.data.role
+      });
+    } catch (profileErr) {
+      // Fallback to basic user info
+      setUser({ id: data.userId, role: data.role, name: 'User' });
+    }
     return data;
   };
 
   const signup = async (name, email, password, role) => {
     const { data } = await api.post('/api/auth/signup', { name, email, password, role });
-    setUser({ id: data.userId, role: data.role });
+    // Fetch full user profile after successful signup
+    try {
+      const profileRes = await api.get('/api/auth/me');
+      setUser({
+        id: profileRes.data._id,
+        name: profileRes.data.name,
+        email: profileRes.data.email,
+        role: profileRes.data.role
+      });
+    } catch (profileErr) {
+      // Fallback to basic user info
+      setUser({ id: data.userId, role: data.role, name: name });
+    }
     return data;
   };
 
